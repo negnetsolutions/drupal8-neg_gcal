@@ -1,0 +1,7 @@
+type: module
+name: Negnet Google Calendar
+description: 'Implements Google Calendar Syncing.'
+package: Examples
+core: 8.x
+dependencies:
+  - negnet_utility

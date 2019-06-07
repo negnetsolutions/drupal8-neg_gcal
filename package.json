@@ -1,0 +1,20 @@
+{
+  "name": "negnetbasetheme",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^6.1.0",
+    "gulp-clean-css": "^3.0.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-shell": "^0.6.3",
+    "gulp-util": "^3.0.8"
+  },
+  "dependencies": {}
+}

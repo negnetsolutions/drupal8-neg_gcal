@@ -1,0 +1,7 @@
+neg_gcal.settings:
+  path: '/admin/config/services/gcal'
+  defaults:
+    _form: '\Drupal\neg_gcal\Form\GcalSettingsForm'
+    _title: 'Google Calendar Settings'
+  requirements:
+    _permission: 'administer site configuration'

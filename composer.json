@@ -1,0 +1,10 @@
+{
+  "name": "negnet/neg_gcal",
+  "description": "Google Calendar Syncing Module",
+  "type": "drupal-module",
+  "license": "GPL-3.0+",
+  "require": {
+    "google/apiclient": "^2.0",
+    "negnet/neg_paragraphs": "master"
+  }
+}

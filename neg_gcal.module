@@ -1,0 +1,109 @@
+<?php
+
+/**
+ * @file
+ * Neg_gcal.module.
+ */
+
+use Drupal\negnet_utility\FieldUtilities;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\neg_gcal\CalendarSettings;
+use Drupal\neg_gcal\Calendars;
+
+/**
+ * Gets allowed vallues for client options.
+ */
+function neg_gcal_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
+  return Calendars::listSyncedWithLabels();
+}
+
+/**
+ * Implements hook_theme().
+ */
+function neg_gcal_theme($existing, $type, $theme, $path) {
+  return [
+    'paragraph__calendar' => [
+      'template' => 'paragraph_calendar',
+      'base hook' => 'paragraph',
+    ],
+    'neg_gcal__month_list_view' => [
+      'template' => 'month_list_view',
+      'variables' => [
+        'days' => [],
+        'dates' => [],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_paragraph().
+ */
+function neg_gcal_preprocess_paragraph(&$variables) {
+  $method = '_neg_gcal_process_paragraph_' . $variables['paragraph']->getType();
+
+  if (function_exists($method)) {
+    $method($variables);
+  }
+}
+
+/**
+ * Preproccess Calendar Paragraph.
+ */
+function _neg_gcal_process_paragraph_calendar(&$variables) {
+  $variables['attributes']['class'][] = 'col';
+  $variables['attributes']['class'][] = 'paragraph';
+  $variables['attributes']['class'][] = 'paragraph-calendar';
+
+  if (FieldUtilities::fieldHasChildren($variables['elements']['#paragraph'], 'field_calendar_options')) {
+    $type = FieldUtilities::fieldChildren($variables['elements']['#paragraph']->field_calendar_options)[0]['value'];
+    $type = "\\Drupal\\neg_gcal\\Views\\$type";
+
+    if (FieldUtilities::fieldHasChildren($variables['elements']['#paragraph'], 'field_calendar')) {
+      $calendar = FieldUtilities::fieldChildren($variables['elements']['#paragraph']->field_calendar)[0]['value'];
+      $view = new $type($calendar, $variables);
+      $view->render();
+    }
+
+  }
+
+}
+
+/**
+ * Implements hook_cron().
+ */
+function neg_gcal_cron() {
+
+  $config = \Drupal::config(CalendarSettings::CONFIGNAME);
+  $runtime = time();
+  $cache_lifetime = $config->get('frequency');
+  $last_sync = $config->get('last_sync');
+  $last_sync = ($last_sync === NULL) ? 0 : $last_sync;
+
+  // Check if we need to sync.
+  if (($last_sync + $cache_lifetime) > $runtime) {
+    return;
+  }
+
+  $queue_factory = \Drupal::service('queue');
+  $queue = $queue_factory->get('gcal_sync');
+
+  if ($queue->numberOfItems() == 0) {
+    foreach (Calendars::listSynced() as $id) {
+
+      $command = [
+        'op' => 'syncCalendar',
+        'calendarId' => $id,
+      ];
+      $queue->createItem($command);
+
+    }
+
+    $command = [
+      'op' => 'finishSync',
+    ];
+    $queue->createItem($command);
+  }
+
+}

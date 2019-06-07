@@ -1,0 +1,35 @@
+<header class="title animate-in">
+  <h1>{{ dates.label }}</h1>
+  <nav class="chooser noprint">
+    <a data-direction="prev" href="{{ url('<current>', {'month': (dates.prevmonth), 'year': dates.prevyear})}}">&larr; <span class="label">Previous Month</span></a>
+    <a data-direction="next" href="{{ url('<current>', {'month': (dates.nextmonth), 'year': dates.nextyear})}}"><span class="label">Next Month</span>&rarr;</a>
+  </nav>
+</header>
+<ul>
+{% for day, events in days %}
+  <li class="animate-in">
+    <span class="day">{{ day }}</span>
+    <ul class="events">
+    {% for event in events['normal'] %}
+      <li>
+        <span class="details">
+          <span class="event_title{% if event.isAllDayEvent() %} all_day{% endif %}">
+            {{ event.getTitle() }}
+          </span>
+          {% if event.isAllDayEvent() == FALSE %}
+            <span class="event_time">{{ event.getEventTime()|raw }}</span>
+          {% endif %}
+          {% if event.getLocation()|render %}
+            <span class="spacer">&nbsp; - &nbsp;</span>
+            <span class="event_location">{{ event.getLocation() }}</span>
+          {% endif %}
+          {% if event.getHtmlDescription()|render %}
+            <span class="event_description">{{ event.getHtmlDescription() }}</span>
+          {% endif %}
+        </span>
+      </li>
+    {% endfor %}
+    </ul>
+  </li>
+{% endfor %}
+</ul>

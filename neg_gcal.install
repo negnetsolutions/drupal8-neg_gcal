@@ -1,0 +1,80 @@
+<?php
+
+/**
+ * @file
+ * Neg_gcal.install.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function neg_gcal_schema() {
+  $schema['google_calendar_events'] = [
+    'description' => 'Base table for storing cached google calendar events',
+    'fields' => [
+      'calendar_id' => [
+        'description' => 'Calendar ID',
+        'type' => 'varchar',
+        'length' => 200,
+        'not null' => TRUE,
+      ],
+      'id' => [
+        'description' => 'Event ID',
+        'type' => 'varchar',
+        'length' => 200,
+        'not null' => TRUE,
+      ],
+      'sequence' => [
+        'description' => 'Event Sequence ID',
+        'type' => 'int',
+        'size' => 'small',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'start' => [
+        'description' => 'Event Start',
+        'mysql_type' => 'datetime',
+        'not null' => TRUE,
+      ],
+      'end' => [
+        'description' => 'Event End',
+        'mysql_type' => 'datetime',
+        'not null' => TRUE,
+      ],
+      'allDay' => [
+        'description' => 'Is All Day Boolean',
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+        'not null' => TRUE,
+      ],
+      'data' => [
+        'description' => 'Serialized Event',
+        'type' => 'blob',
+        'size' => 'big',
+        'not null' => TRUE,
+      ],
+      'title' => [
+        'description' => 'Name of the Event',
+        'type' => 'varchar',
+        'length' => '200',
+        'not null' => TRUE,
+      ],
+      'ical_id' => [
+        'description' => 'iCalUID',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+      ],
+    ],
+    'indexes' => [
+      'calendar_idx' => ['calendar_id'],
+      'id_idx' => ['id'],
+      'start_idx' => ['start'],
+      'end_idx' => ['end'],
+      'all_day_idx' => ['allDay'],
+      'title_idx' => ['title'],
+    ],
+  ];
+  return $schema;
+}

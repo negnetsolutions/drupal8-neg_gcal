@@ -1,0 +1,30 @@
+uuid: f8e71773-4f32-4c34-94c8-f081f930832d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.calendar.field_calendar
+    - field.field.paragraph.calendar.field_calendar_options
+    - paragraphs.paragraphs_type.calendar
+_core:
+  default_config_hash: H5ZKBvb5JfoRloVafE68qp11k6IW79xfrMUa1cSWvoM
+id: paragraph.calendar.default
+targetEntityType: paragraph
+bundle: calendar
+mode: default
+content:
+  field_calendar:
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
+  field_calendar_options:
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
+hidden:
+  created: true
+  status: true

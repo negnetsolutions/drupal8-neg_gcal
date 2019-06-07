@@ -1,0 +1,134 @@
+.printer_icon {
+  display: none !important;
+}
+
+.event_calendar-nav-wrapper {
+  h3 {
+    font-size: 1.7em;
+  }
+
+  .pager {
+    display: none;
+  }
+}
+
+.event_calendar {
+  font-size: 0.9em;
+  width: 764px;
+  border-collapse: collapse;
+
+  th {
+    text-align: center;
+  }
+
+  tr {
+    border-width: 0px;
+  }
+
+  td {
+    width: 109px;
+    vertical-align: top;
+    padding: 4px;
+
+    &.day {
+      border: 1px solid #ccc;
+      height: 90px;
+    }
+
+    .daylabel {
+      text-align: right;
+      color: white;
+      color: #777;
+      padding-right: 0.5em;
+
+      span {
+        display: none;
+      }
+    }
+
+    .events {
+      margin: 0;
+      padding: 0;
+
+      li {
+        margin: 0 0 0.2em 0 !important;
+        padding: 0 !important;
+        list-style-type: none;
+
+        &.all_day {
+          text-align: center;
+          font-style: italic;
+        }
+
+        .event_title {
+          font-weight: bold;
+        }
+
+        dl {
+          position: relative;
+          display: inline;
+
+          &:hover {
+            dd {
+              display: block;
+            }
+          }
+        }
+
+        dt {
+          display: inline;
+          cursor: pointer;
+        }
+
+        dd {
+          display: none;
+        }
+      }
+    }
+  }
+  .event_time {
+    span {
+      display: none;
+    }
+  }
+
+}
+
+.google_calendar_academic {
+  h3 {
+    margin-top: 1em;
+  }
+
+  ul {
+    margin: 0 0 10px 1em !important;
+    padding: 0 !important;
+
+    li {
+      margin: 0 !important;
+      padding: 0 !important;
+      list-style-type: none;
+      font-size: 0.9em;
+      list-style-position: inside;
+      color: black;
+      display: flex;
+
+      .spacer {
+        display: none;
+      }
+
+      .day {
+        color: gray;
+        width: 80px;
+      }
+      .day, .details {
+        display: block;
+      }
+
+      .event_location {
+        display: block;
+        font-style: italic;
+        padding-left: 0.5em;
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+.paragraph-calendar {
+  &.MonthListView {
+    & > ul {
+      margin: 0 0 1em 1em;
+      padding: 0;
+
+      li {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+        list-style-position: inside;
+        display: flex;
+
+        .day {
+          color: gray;
+        }
+
+        ul.events {
+          .spacer {
+            display: none;
+          }
+
+          .day, .details {
+            display: block;
+          }
+
+          .event_location {
+            display: block;
+            font-style: italic;
+            padding-left: 0.5em;
+          }
+        }
+      }
+    }
+  }
+}

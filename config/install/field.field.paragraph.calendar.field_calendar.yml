@@ -1,0 +1,21 @@
+uuid: 132f402e-1522-42be-98fb-482a2f5b5b32
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_calendar
+    - paragraphs.paragraphs_type.calendar
+  module:
+    - options
+id: paragraph.calendar.field_calendar
+field_name: field_calendar
+entity_type: paragraph
+bundle: calendar
+label: Calendar
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

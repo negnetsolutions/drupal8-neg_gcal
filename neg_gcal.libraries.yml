@@ -1,0 +1,10 @@
+base:
+  css:
+    theme:
+      css/calendar_base.css: {}
+monthlist:
+  css:
+    theme:
+      css/month-list-view.css: {}
+  dependencies:
+    - neg_gcal/base

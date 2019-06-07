@@ -1,0 +1,5 @@
+neg_gcal.settings:
+  title: 'Google Calendar Settings'
+  parent: system.admin_config_services
+  description: 'Configure Google Calendar Syncing Settings'
+  route_name: neg_gcal.settings

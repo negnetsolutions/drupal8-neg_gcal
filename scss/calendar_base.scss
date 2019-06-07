@@ -1,0 +1,24 @@
+.paragraph-calendar {
+
+  .chooser {
+
+  }
+
+  .event_title {
+    font-weight: bold;
+    .spacer {
+      display: none;
+    }
+    .event_location {
+      display: block;
+      font-weight: normal;
+      font-style: italic;
+    }
+  }
+
+  .event_time {
+    span {
+      display: none;
+    }
+  }
+}
