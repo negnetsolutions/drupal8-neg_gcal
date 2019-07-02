@@ -143,11 +143,20 @@ class CalendarEvent {
   }
 
   /**
+   * Get last sequenced event.
+   */
+  public function getSequencedLastEvent() {
+    $events = $this->getSequencedEvents();
+    return end($events);
+  }
+
+  /**
    * Prints the sequence days.
    */
   public function getPrintableSequenceDays() {
     $start = $this->getDateTime($this->getSequenceStart());
-    $end = $this->getDateTime($this->getSequenceEnd());
+    $lastEvent = $this->getSequencedLastEvent();
+    $end = $this->getDateTime($lastEvent->getStart());
 
     $output = $start->format('j') . ' - ';
 
@@ -165,7 +174,6 @@ class CalendarEvent {
    * Gets sequence start.
    */
   protected function getSequenceStart() {
-    print_r($this->data, TRUE);
     if (is_null($this->data['sequence']['start']['dateTime'])) {
       return $this->data['sequence']['start']['date'];
     }
@@ -277,7 +285,7 @@ class CalendarEvent {
    * Gets sequenced Events.
    */
   public function getSequencedEvents() {
-    $days = $this->getEventLengthDays();
+    $days = $this->getSequencedEventLengthDays();
     $events = [];
     $count = ceil($days);
     for ($i = 0; $i < $count; $i++) {
@@ -335,16 +343,8 @@ class CalendarEvent {
       $this->data['end']['date'] = $eDt->format('Y-m-d');
     }
     else {
-      if ($this->getSequence() != 0) {
-        $this->data['start']['date'] = $sDt->format('Y-m-d');
-        $this->data['end']['date'] = $eDt->format('Y-m-d');
-        unset($this->data['start']['dateTime']);
-        unset($this->data['end']['dateTime']);
-      }
-      else {
-        $this->data['start']['dateTime'] = $sDt->format('c');
-        $this->data['end']['dateTime'] = $eDt->format('c');
-      }
+      $this->data['start']['dateTime'] = $sDt->format('c');
+      $this->data['end']['dateTime'] = $eDt->format('c');
     }
 
     $this->data['start'] = (array) clone(object) $this->data['start'];
@@ -364,7 +364,7 @@ class CalendarEvent {
    */
   private function getDateTime($time) {
     if ($this->isAllDayEvent()) {
-      return DateTime::createFromFormat('Y-m-d', $time);
+      return DateTime::createFromFormat('Y-m-d H:i:s', $time . ' 00:00:00');
     }
 
     return new DateTime($time);
@@ -393,6 +393,28 @@ class CalendarEvent {
   }
 
   /**
+   * Gets sequence length in seconds.
+   */
+  public function getSequencedEventLengthSeconds() {
+    $start = $this->getDateTime($this->getSequenceStart());
+    $sTime = $start->getTimestamp();
+
+    $end = $this->getDateTime($this->getSequenceEnd());
+    $eTime = $end->getTimestamp();
+
+    $diff = $eTime - $sTime;
+    return $diff;
+  }
+
+  /**
+   * Gets event length in days.
+   */
+  public function getSequencedEventLengthDays() {
+    $diff = $this->getSequencedEventLengthSeconds();
+    return ($diff / (60 * 60 * 24));
+  }
+
+  /**
    * Checks if event is sequenced.
    */
   public function isSequenced() {
@@ -417,7 +439,7 @@ class CalendarEvent {
 
     $days = $this->getEventLengthDays();
 
-    if ($days >= 1) {
+    if ($days > 1) {
       return TRUE;
     }
 
