@@ -225,7 +225,6 @@ class CalendarSync {
     }
     else {
 
-      print "<pre>";
       // Calculate Start And End Dates.
       $event->setSequenceStartAndEnd();
 
