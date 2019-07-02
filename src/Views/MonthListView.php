@@ -60,10 +60,8 @@ class MonthListView extends BaseView {
         ],
       ],
       '#cache' => [
-        'context' => ['url.query_args'],
+        'contexts' => ['url'],
         'tags' => ['gcal_' . $this->calendar],
-        // 'max-age' => 86400,
-        'max-age' => 0,
       ],
     ];
 
