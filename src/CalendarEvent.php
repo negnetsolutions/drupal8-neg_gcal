@@ -4,6 +4,7 @@ namespace Drupal\neg_gcal;
 
 use DateTime;
 use DateInterval;
+use function DeepCopy\deep_copy;
 
 /**
  * Class CalendarEvent.
@@ -291,7 +292,7 @@ class CalendarEvent {
    * Gets sequenced Event.
    */
   protected function getSequencedEvent($index) {
-    $newEvent = new self($this->getCalendarId(), (array) clone(object) $this->getData());
+    $newEvent = new self($this->getCalendarId(), deep_copy($this->getData()));
     $newEvent->setSequence($index);
     $newEvent->addDaystoEventTime($index);
 

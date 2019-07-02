@@ -5,6 +5,7 @@
   "license": "GPL-3.0+",
   "require": {
     "google/apiclient": "^2.0",
+    "myclabs/deep-copy": "^1.9",
     "negnet/neg_paragraphs": "master"
   }
 }
