@@ -44,17 +44,17 @@ class CalendarService {
       $subject = $config->get('subject');
 
       if (is_null($json)) {
-        throw new Exception('Service Account Auth JSON is not set!');
+        throw new \Exception('Service Account Auth JSON is not set!');
       }
 
       if (is_null($subject)) {
-        throw new Exception('Service Account Subject is not set!');
+        throw new \Exception('Service Account Subject is not set!');
       }
 
       $this->settings = json_decode($json);
 
       if (!$this->settings) {
-        throw new Exception('Could not decode Service Account JSON!');
+        throw new \Exception('Could not decode Service Account JSON!');
       }
 
       $this->settings->subject = $subject;
@@ -77,7 +77,7 @@ class CalendarService {
       $this->client->setSubject($settings->subject);
 
       if (!$this->client) {
-        throw new Exception('Could not get Google Calendar Client!');
+        throw new \Exception('Could not get Google Calendar Client!');
       }
     }
 
@@ -92,7 +92,7 @@ class CalendarService {
     if ($this->service === FALSE) {
       $this->service = new Google_Service_Calendar($this->getClient());
       if (!$this->service) {
-        throw new Exception('Could not get Google Calendar Service!');
+        throw new \Exception('Could not get Google Calendar Service!');
       }
     }
 
