@@ -7,7 +7,7 @@ namespace Drupal\neg_gcal;
  */
 class CalendarSettings {
 
-  const CONFIGNAME = 'gcal.settings';
+  const CONFIGNAME = 'neg_gcal.settings';
   const TABLENAME = 'google_calendar_events';
 
 }
