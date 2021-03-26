@@ -2,8 +2,6 @@
 
 namespace Drupal\neg_gcal;
 
-use DateTime;
-use DateInterval;
 use function DeepCopy\deep_copy;
 
 /**
@@ -333,10 +331,10 @@ class CalendarEvent {
   protected function addDaysToEventTime($days) {
     $start = $this->getStart();
     $sDt = clone $this->getDateTime($start);
-    $sDt->add(new DateInterval('P' . $days . 'D'));
+    $sDt->add(new \DateInterval('P' . $days . 'D'));
 
     $eDt = clone $sDt;
-    $eDt->add(new DateInterval('PT23H59M'));
+    $eDt->add(new \DateInterval('PT23H59M'));
 
     if ($this->isAllDayEvent()) {
       $this->data['start']['date'] = $sDt->format('Y-m-d');
@@ -355,7 +353,7 @@ class CalendarEvent {
    * Gets mysql datetime.
    */
   private function getMysqlDateTime($value) {
-    $dt = new DateTime($value);
+    $dt = new \DateTime($value);
     return $dt->format('Y-m-d H:i:s');
   }
 
@@ -364,10 +362,10 @@ class CalendarEvent {
    */
   private function getDateTime($time) {
     if ($this->isAllDayEvent()) {
-      return DateTime::createFromFormat('Y-m-d H:i:s', $time . ' 00:00:00');
+      return \DateTime::createFromFormat('Y-m-d H:i:s', $time . ' 00:00:00');
     }
 
-    return new DateTime($time);
+    return new \DateTime($time);
   }
 
   /**

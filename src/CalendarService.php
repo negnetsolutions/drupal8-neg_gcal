@@ -2,15 +2,24 @@
 
 namespace Drupal\neg_gcal;
 
-use Google_Client;
-use Google_Service_Calendar;
-
 /**
  * Class CalendarService.
  */
 class CalendarService {
+
+  /**
+   * Google service.
+   */
   protected $service = FALSE;
+
+  /**
+   * Google client.
+   */
   protected $client = FALSE;
+
+  /**
+   * Settings array.
+   */
   protected $settings = FALSE;
 
   /**
@@ -70,7 +79,7 @@ class CalendarService {
     if ($this->client === FALSE) {
       $settings = $this->getServiceAccountSettings();
 
-      $this->client = new Google_Client();
+      $this->client = new \Google_Client();
       $this->client->setAuthConfig((array) $settings);
 
       $this->client->addScope('https://www.googleapis.com/auth/calendar.readonly');
@@ -90,7 +99,7 @@ class CalendarService {
   protected function getService() {
 
     if ($this->service === FALSE) {
-      $this->service = new Google_Service_Calendar($this->getClient());
+      $this->service = new \Google_Service_Calendar($this->getClient());
       if (!$this->service) {
         throw new \Exception('Could not get Google Calendar Service!');
       }
