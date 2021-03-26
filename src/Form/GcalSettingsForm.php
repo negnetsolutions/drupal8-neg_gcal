@@ -115,7 +115,7 @@ class GcalSettingsForm extends ConfigFormBase {
     }
     $config->clear('last_sync');
     $config->save();
-    drupal_set_message('A full sync has been queued. Run cron to sync.', 'status', TRUE);
+    \Drupal::messenger()->addStatus('A full sync has been queued. Run cron to sync.');
   }
 
   /**
@@ -125,7 +125,7 @@ class GcalSettingsForm extends ConfigFormBase {
     $config = $this->configFactory->getEditable(CalendarSettings::CONFIGNAME);
     $config->clear('last_sync');
     $config->save();
-    drupal_set_message('Last Sync time has been reset. Run cron to sync.', 'status', TRUE);
+    \Drupal::messenger()->addStatus('Last Sync time has been reset. Run cron to sync.');
   }
 
   /**

@@ -57,7 +57,7 @@ class Calendars {
       }
     }
     catch (\Exception $e) {
-      drupal_set_message($e->getMessage(), 'warning', TRUE);
+      \Drupal::messenger()->addWarning($e->getMessage());
       return FALSE;
     }
 
