@@ -3,7 +3,6 @@
 namespace Drupal\neg_gcal\Plugin;
 
 use Drupal\neg_gcal\CalendarService;
-use Google_Service_Calendar_Event;
 use Drupal\neg_gcal\CalendarEvent;
 use Drupal\neg_gcal\CalendarSettings;
 use Drupal\Core\Cache\Cache;
@@ -142,7 +141,7 @@ class CalendarSync {
   /**
    * Requests a single recurring event.
    */
-  protected function requestSingleRecurringEvent(Google_Service_Calendar_Event $item) {
+  protected function requestSingleRecurringEvent(\Google_Service_Calendar_Event $item) {
     try {
       $service = CalendarService::instance();
     }
