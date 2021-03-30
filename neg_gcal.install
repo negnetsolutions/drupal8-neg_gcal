@@ -5,6 +5,8 @@
  * Neg_gcal.install.
  */
 
+use Drupal\neg_gcal\CalendarSettings;
+
 /**
  * Implements hook_schema().
  */
@@ -77,4 +79,30 @@ function neg_gcal_schema() {
     ],
   ];
   return $schema;
+}
+
+/**
+ * Switches to using drupal state instead of config.
+ */
+function neg_gcal_update_8701(&$sandbox) {
+  $config = \Drupal::service('config.factory')->getEditable(CalendarSettings::CONFIGNAME);
+
+  // Get last sync time.
+  $last_sync = $config->get('last_sync');
+  \Drupal::state()->set('neg_gcal.last_sync', $last_sync);
+  $config->clear('last_sync');
+
+  // Handle next sync tokens.
+  $data = $config->get();
+  foreach ($data as $key => $data) {
+    if (substr($key, 0, 14) === 'nextSyncToken_') {
+      \Drupal::state()->set('neg_gcal.' . $key, $data);
+      $config->clear($key);
+    }
+  }
+
+  // Save config.
+  $config->save();
+
+  return t('Switched to using Drupal State.');
 }

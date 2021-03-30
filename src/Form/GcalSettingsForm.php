@@ -76,8 +76,9 @@ class GcalSettingsForm extends ConfigFormBase {
       ];
     }
 
+    $last_sync = \Drupal::state()->get('neg_gcal.last_sync', 0);
     $form['last_sync'] = [
-      '#markup' => '<p>Last Sync: ' . date('r', $config->get('last_sync')) . '</p>',
+      '#markup' => '<p>Last Sync: ' . date('r', $last_sync) . '</p>',
     ];
 
     $form['reset_last_sync'] = [
@@ -106,15 +107,19 @@ class GcalSettingsForm extends ConfigFormBase {
    * Forces a full sync next time.
    */
   public function fullSync(array &$form, FormStateInterface $form_state) {
-    $config = $this->configFactory->getEditable(CalendarSettings::CONFIGNAME);
-    $data = $config->get();
-    foreach ($data as $key => $data) {
-      if (substr($key, 0, 14) === 'nextSyncToken_') {
-        $config->clear($key);
-      }
-    }
-    $config->clear('last_sync');
-    $config->save();
+
+    // Delete all next sync tokens.
+    $query = \Drupal::database()->delete('key_value', 'kv')
+      ->condition('collection', 'state')
+      ->condition('name', 'neg_gcal.nextSyncToken_%', 'LIKE')
+      ->execute();
+
+    // Clear Drupal State Cache after database deletion.
+    \Drupal::state()->resetCache();
+
+    // Reset last_sync time.
+    \Drupal::state()->set('neg_gcal.last_sync', 0);
+
     \Drupal::messenger()->addStatus('A full sync has been queued. Run cron to sync.');
   }
 
@@ -122,9 +127,7 @@ class GcalSettingsForm extends ConfigFormBase {
    * Resets last sync time.
    */
   public function resetLastSync(array &$form, FormStateInterface $form_state) {
-    $config = $this->configFactory->getEditable(CalendarSettings::CONFIGNAME);
-    $config->clear('last_sync');
-    $config->save();
+    \Drupal::state()->set('neg_gcal.last_sync', 0);
     \Drupal::messenger()->addStatus('Last Sync time has been reset. Run cron to sync.');
   }
 

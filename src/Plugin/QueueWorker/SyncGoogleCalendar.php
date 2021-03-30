@@ -25,9 +25,7 @@ class SyncGoogleCalendar extends QueueWorkerBase {
         break;
 
       case 'finishSync':
-        $config = \Drupal::service('config.factory')->getEditable(CalendarSettings::CONFIGNAME);
-        $config->set('last_sync', time());
-        $config->save();
+        \Drupal::state()->set('neg_gcal.last_sync', time());
         break;
     }
   }

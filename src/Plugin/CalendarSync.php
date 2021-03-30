@@ -65,7 +65,7 @@ class CalendarSync {
       'timeMax' => date('c', (time() + 63072000)),
     ];
 
-    $syncToken = $this->config()->get('nextSyncToken_' . md5($this->id));
+    $syncToken = \Drupal::state()->get('neg_gcal.nextSyncToken_' . md5($this->id));
 
     if ($syncToken !== NULL) {
       $optParams = [
@@ -86,7 +86,7 @@ class CalendarSync {
 
       if ($syncToken !== NULL) {
         // Delete the sync token so we can try a full sync next time!
-        $this->editableConfig()->clear('nextSyncToken_' . md5($this->id))->save();
+        \Drupal::state()->delete('neg_gcal.nextSyncToken_' . md5($this->id));
       }
 
       $this->log($e->getMessage(), [], 'error');
@@ -107,12 +107,12 @@ class CalendarSync {
 
     if (!is_null($nextSyncToken)) {
       // Set the next sync token.
-      $this->editableConfig()->set('nextSyncToken_' . md5($this->id), $nextSyncToken)->save();
+      \Drupal::state()->set('neg_gcal.nextSyncToken_' . md5($this->id), $nextSyncToken);
     }
     elseif (is_null($nextPageToken)) {
       // We didn't get one and we are on the last page of data,
       // let's delete the stored token.
-      $this->editableConfig()->clear('nextSyncToken_' . md5($this->id))->save();
+      \Drupal::state()->delete('neg_gcal.nextSyncToken_' . md5($this->id));
     }
 
     if (!is_null($nextPageToken)) {

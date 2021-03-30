@@ -78,8 +78,7 @@ function neg_gcal_cron() {
   $config = \Drupal::config(CalendarSettings::CONFIGNAME);
   $runtime = time();
   $cache_lifetime = $config->get('frequency');
-  $last_sync = $config->get('last_sync');
-  $last_sync = ($last_sync === NULL) ? 0 : $last_sync;
+  $last_sync = \Drupal::state()->get('neg_gcal.last_sync', 0);
 
   // Check if we need to sync.
   if (($last_sync + $cache_lifetime) > $runtime) {
