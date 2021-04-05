@@ -109,7 +109,7 @@ class GcalSettingsForm extends ConfigFormBase {
   public function fullSync(array &$form, FormStateInterface $form_state) {
 
     // Delete all next sync tokens.
-    $query = \Drupal::database()->delete('key_value', 'kv')
+    $query = \Drupal::database()->delete('key_value')
       ->condition('collection', 'state')
       ->condition('name', 'neg_gcal.nextSyncToken_%', 'LIKE')
       ->execute();
