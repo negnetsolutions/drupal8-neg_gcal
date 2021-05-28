@@ -65,7 +65,8 @@ class CalendarSync {
       'timeMax' => date('c', (time() + 63072000)),
     ];
 
-    $syncToken = \Drupal::state()->get('neg_gcal.nextSyncToken_' . md5($this->id));
+    $tokenKey = 'neg_gcal.nextSyncToken_' . md5($this->id);
+    $syncToken = \Drupal::state()->get($tokenKey);
 
     if ($syncToken !== NULL) {
       $optParams = [
@@ -82,11 +83,11 @@ class CalendarSync {
     try {
       $results = $service->events->listEvents($this->id, $optParams);
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
 
       if ($syncToken !== NULL) {
         // Delete the sync token so we can try a full sync next time!
-        \Drupal::state()->delete('neg_gcal.nextSyncToken_' . md5($this->id));
+        \Drupal::state()->delete($tokenKey);
       }
 
       $this->log($e->getMessage(), [], 'error');
