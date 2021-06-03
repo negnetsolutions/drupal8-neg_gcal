@@ -127,11 +127,6 @@ class CalendarSync {
         ->condition('calendar_id', $this->id)
         ->condition('id', $eventIdList, 'not in')
         ->execute();
-
-      // Set last_full_sync.
-      $runtime = time();
-      $this->editableConfig()->set('lastFullSync_' . md5($this->id), $runtime)->save();
-      $this->log('Setting Last Full Sync Time for Calendar @id to @time', ['@id' => $this->id, '@time' => $runtime], 'notice');
     }
 
     // Invalidate Cache Tags.
