@@ -90,6 +90,13 @@ class CalendarEvent {
   }
 
   /**
+   * Gets link to event.
+   */
+  public function getLink() {
+    return $this->data['htmlLink'];
+  }
+
+  /**
    * Gets the description.
    */
   public function getDescription() {
