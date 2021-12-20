@@ -263,7 +263,7 @@ class CalendarSync {
         'start' => $event->getStartDateTime(),
         'end' => $event->getEndDateTime(),
         'allDay' => (int) $event->isAllDayEvent(),
-        'title' => $event->getTitle(),
+        'title' => $event->getTitle() ?? 'Untitled Event',
         'sequence' => $event->getSequence(),
         'data' => serialize($event->getData()),
       ])
