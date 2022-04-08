@@ -8,7 +8,7 @@
 <ul>
 {% for day, events in days %}
   <li class="animate-in">
-    <span class="day">{{ day }}</span>
+    <span class="day"><span>{{ day }}</span></span>
     <ul class="events">
     {% for event in events['normal'] %}
       <li>
