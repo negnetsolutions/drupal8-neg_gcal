@@ -2,6 +2,8 @@
 
 namespace Drupal\neg_gcal\Views;
 
+use Drupal\neg_gcal\Events\AlterEventsByMonthCache;
+
 /**
  * Class MonthListView.
  */
@@ -50,6 +52,15 @@ class MonthListView extends BaseView {
     $this->setOptions();
     $days = $this->fetchEventDays();
 
+    $cache = [
+      'contexts' => ['url'],
+      'tags' => ['gcal_' . $this->calendar],
+    ];
+
+    $event = new AlterEventsByMonthCache($cache);
+    $event_dispatcher = \Drupal::service('event_dispatcher');
+    $event_dispatcher->dispatch(AlterEventsByMonthCache::CACHE, $event);
+
     $this->variables['view'] = [
       '#theme' => 'neg_gcal__month_list_view',
       '#days' => $days,
@@ -59,10 +70,7 @@ class MonthListView extends BaseView {
           'neg_gcal/monthlist',
         ],
       ],
-      '#cache' => [
-        'contexts' => ['url'],
-        'tags' => ['gcal_' . $this->calendar],
-      ],
+      '#cache' => $cache,
     ];
 
   }
@@ -76,7 +84,6 @@ class MonthListView extends BaseView {
 
     foreach ($days as $day => $events) {
       $day_label = \DateTime::createFromFormat('m-d-Y', $day)->format('j');
-      $sequenced = [];
 
       if (!isset($output[$day_label])) {
         $output[$day_label] = [

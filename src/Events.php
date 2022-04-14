@@ -2,6 +2,8 @@
 
 namespace Drupal\neg_gcal;
 
+use Drupal\neg_gcal\Events\AlterEventsByMonthEvent;
+
 /**
  * Class Events.
  */
@@ -31,6 +33,11 @@ class Events {
     ];
 
     $e = $this->getEvents($params);
+
+    $event = new AlterEventsByMonthEvent($e);
+    $event_dispatcher = \Drupal::service('event_dispatcher');
+    $event_dispatcher->dispatch(AlterEventsByMonthEvent::READY, $event);
+
     return $this->sortEventsByDay($e);
   }
 
