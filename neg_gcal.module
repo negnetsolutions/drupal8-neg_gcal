@@ -62,8 +62,10 @@ function _neg_gcal_process_paragraph_calendar(&$variables) {
 
     if (FieldUtilities::fieldHasChildren($variables['elements']['#paragraph'], 'field_calendar')) {
       $calendar = FieldUtilities::fieldChildren($variables['elements']['#paragraph']->field_calendar)[0]['value'];
-      $view = new $type($calendar, $variables);
-      $view->render();
+      if (class_exists($type)) {
+        $view = new $type($calendar, $variables);
+        $view->render();
+      }
     }
 
   }
