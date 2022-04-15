@@ -68,9 +68,16 @@ function neg_gcal_schema() {
         'length' => '255',
         'not null' => TRUE,
       ],
+      'color_id' => [
+        'description' => 'Colod ID',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => FALSE,
+      ],
     ],
     'indexes' => [
       'calendar_idx' => ['calendar_id'],
+      'color_idx' => ['color_id'],
       'id_idx' => ['id'],
       'start_idx' => ['start'],
       'end_idx' => ['end'],
@@ -111,12 +118,34 @@ function neg_gcal_update_8701(&$sandbox) {
  * Adds color_id column to table.
  */
 function neg_gcal_update_8702(&$sandbox) {
-  $query = \Drupal::database()->query("ALTER TABLE `google_calendar_events` ADD COLUMN `color_id` varchar(255)");
-  $query->execute();
+  $conn = \Drupal::database();
 
-  $query = \Drupal::database()->query("ALTER TABLE `google_calendar_events`
-ADD INDEX `idx_color_id` (`color_id`) USING BTREE");
-  $query->execute();
+  $spec = [
+    'description' => 'Color ID',
+    'type' => 'varchar',
+    'length' => 200,
+    'not null' => FALSE,
+  ];
 
-  return t('Added color_id column to google calendar events.');
+  $ret[] = $conn->schema()->addField('google_calendar_events', 'color_id', $spec);
+
+  $fields = ['color_id'];
+  $schema = $conn->schema();
+
+  // Add index.
+  $ret[] = $schema->addIndex('google_calendar_events', 'color_idx', $fields, [
+    'fields' => [
+      'color_id' => [
+        'description' => 'Colod ID',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => FALSE,
+      ],
+    ],
+    'indexes' => [
+      'color_idx' => ['color_id'],
+    ],
+  ]);
+
+  return $ret;
 }
