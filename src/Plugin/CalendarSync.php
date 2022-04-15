@@ -265,6 +265,7 @@ class CalendarSync {
         'allDay' => (int) $event->isAllDayEvent(),
         'title' => $event->getTitle() ?? 'Untitled Event',
         'sequence' => $event->getSequence(),
+        'color_id' => $event->getColorId(),
         'data' => serialize($event->getData()),
       ])
       ->execute();

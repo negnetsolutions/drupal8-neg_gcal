@@ -57,6 +57,13 @@ class CalendarEvent {
   }
 
   /**
+   * Get's event color.
+   */
+  public function getColorId() {
+    return $this->data['colorId'];
+  }
+
+  /**
    * Gets the uid.j.
    */
   public function getiCalUID() {

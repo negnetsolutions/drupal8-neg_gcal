@@ -106,3 +106,17 @@ function neg_gcal_update_8701(&$sandbox) {
 
   return t('Switched to using Drupal State.');
 }
+
+/**
+ * Adds color_id column to table.
+ */
+function neg_gcal_update_8702(&$sandbox) {
+  $query = \Drupal::database()->query("ALTER TABLE `google_calendar_events` ADD COLUMN `color_id` varchar(255)");
+  $query->execute();
+
+  $query = \Drupal::database()->query("ALTER TABLE `google_calendar_events`
+ADD INDEX `idx_color_id` (`color_id`) USING BTREE");
+  $query->execute();
+
+  return t('Added color_id column to google calendar events.');
+}

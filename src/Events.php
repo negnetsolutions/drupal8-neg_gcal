@@ -66,7 +66,7 @@ class Events {
   /**
    * Queries for Events.
    */
-  private function getEvents($params = []) {
+  public function getEvents($params = []) {
 
     $events = [];
 
@@ -84,6 +84,14 @@ class Events {
 
     if (isset($params['mergeSequencedEvents']) && $params['mergeSequencedEvents'] == TRUE) {
       $query->condition('sequence', 0, '=');
+    }
+
+    if (isset($params['hasColor'])) {
+      $query->isNotNull('color_id');
+    }
+
+    if (isset($params['limit'])) {
+      $query->range(0, $params['limit']);
     }
 
     $query->orderBy('start', 'ASC');
