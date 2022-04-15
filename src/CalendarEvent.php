@@ -4,6 +4,7 @@ namespace Drupal\neg_gcal;
 
 use function DeepCopy\deep_copy;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\File\FileSystemInterface;
 
 /**
  * Class CalendarEvent.
@@ -98,6 +99,117 @@ class CalendarEvent {
   }
 
   /**
+   * Get's file attachments.
+   */
+  public function getAttachments() {
+    $attachments = [];
+    if (isset($this->data['attachments'])) {
+      foreach ($this->data['attachments'] as $attachment) {
+        $data = [
+          'type' => $attachment->mimeType,
+          'id' => $attachment->fileId,
+          'file' => NULL,
+        ];
+
+        try {
+          $data['file'] = $this->getLocalFileFromAttachment($attachment);
+        }
+        catch (\Exception $e) {
+          \Drupal::logger('neg_gcal')->error($e->getMessage());
+        }
+
+        $attachments[] = $data;
+      }
+    }
+
+    return $attachments;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getLocalFileFromAttachment($attachment) {
+    $directory = file_build_uri('neg_gcal_attachments');
+    if (!\Drupal::service('file_system')->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY)) {
+      // If our directory doesn't exist and can't be created, use the default.
+      $directory = NULL;
+    }
+    $fs = \Drupal::service('file_system');
+
+    // Check destination.
+    if (!is_dir($fs->realpath($directory))) {
+      throw new \Exception('Couldn\'t get attachment download folder!');
+    }
+
+    $path = str_replace('///', '//', "{$directory}/") . $attachment->fileId;
+
+    // Check for existing file.
+    $existing_files = \Drupal::entityTypeManager()->getStorage('file')->loadByProperties([
+      'uri' => $path,
+    ]);
+
+    if (count($existing_files) > 0) {
+      return reset($existing_files);
+    }
+
+    // Download the file.
+    $service = CalendarService::fileInstance();
+    $file = $service->files->get($attachment->fileId, ['alt' => 'media']);
+    $data = $file->getBody()->getContents();
+
+    // Save the file.
+    $local = file_save_data($data, $path, FileSystemInterface::EXISTS_REPLACE);
+
+    return $local;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getThumbnailFile() {
+    $types = [
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+    ];
+    $attachments = $this->getAttachments();
+    foreach ($attachments as $attachment) {
+      if ($attachment['file'] && in_array($attachment['type'], $types)) {
+        return $attachment['file'];
+      }
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getThumbnail(string $style = 'rs_image') {
+    $file = $this->getThumbnailFile();
+    if (!$file) {
+      return FALSE;
+    }
+
+    $build = [
+      '#theme' => 'responsive_image',
+      '#responsive_image_style_id' => $style,
+      '#uri' => $file->getFileUri(),
+    ];
+
+    // Get file information.
+    $image = \Drupal::service('image.factory')->get($file->getFileUri());
+    if (!$image->isValid()) {
+      return FALSE;
+    }
+
+    $build['#width'] = $image->getWidth();
+    $build['#height'] = $image->getHeight();
+
+    return $build;
+  }
+
+  /**
    * Gets the description.
    */
   public function getDescription() {
@@ -108,7 +220,18 @@ class CalendarEvent {
    * Prints the description.
    */
   public function getHtmlDescription() {
-    return Markup::create(str_replace("\n", "<br />\n", $this->getDescription()));
+    $text = $this->getDescription();
+    $text = str_replace('html-blob', 'p', $text);
+    $text = str_replace("\n", "<br />\n", $text);
+
+    if (!strpos($text, '<p>')) {
+      $text = "<p>$text</p>";
+    }
+    return [
+      '#type' => 'processed_text',
+      '#text' => $text,
+      '#format' => 'html',
+    ];
   }
 
   /**
@@ -283,15 +406,15 @@ class CalendarEvent {
     if ($this->isSequenced() == FALSE) {
       $date = date('g:i', $end);
       if (date('a', $end) == 'am') {
-        $pm = 'a';
+        $pm = ' AM';
       }
       else {
-        $pm = 'p';
+        $pm = ' PM';
       }
       $output .= '<span> - ' . $date . $pm . '</span>';
     }
 
-    return $output;
+    return Markup::create($output);
   }
 
   /**

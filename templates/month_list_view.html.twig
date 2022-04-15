@@ -17,7 +17,7 @@
             {{ event.getTitle() }}
           </span>
           {% if event.isAllDayEvent() == FALSE %}
-            <span class="event_time">{{ event.getEventTime()|raw }}</span>
+            <span class="event_time">{{ event.getEventTime() }}</span>
           {% endif %}
           {% if event.getLocation()|render %}
             <span class="spacer">&nbsp; - &nbsp;</span>

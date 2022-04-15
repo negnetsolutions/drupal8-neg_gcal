@@ -2,6 +2,10 @@
 
 namespace Drupal\neg_gcal;
 
+use Google\Service\Calendar;
+use Google\Service\Drive;
+use Google\Client;
+
 /**
  * Class CalendarService.
  */
@@ -11,6 +15,11 @@ class CalendarService {
    * Google service.
    */
   protected $service = FALSE;
+
+  /**
+   * Google file service.
+   */
+  protected $fileService = FALSE;
 
   /**
    * Google client.
@@ -23,16 +32,31 @@ class CalendarService {
   protected $settings = FALSE;
 
   /**
+   * {@inheritdoc}
+   */
+  protected static $inst = NULL;
+
+  /**
    * Gets the static instance.
    */
   public static function instance() {
-    static $inst = NULL;
 
-    if ($inst === NULL) {
-      $inst = new self();
+    if (self::$inst === NULL) {
+      self::$inst = new self();
     }
 
-    return $inst->getService();
+    return self::$inst->getService();
+  }
+
+  /**
+   * Gets the static instance.
+   */
+  public static function fileInstance() {
+    if (self::$inst === NULL) {
+      self::$inst = new self();
+    }
+
+    return self::$inst->getFileService();
   }
 
   /**
@@ -79,10 +103,11 @@ class CalendarService {
     if ($this->client === FALSE) {
       $settings = $this->getServiceAccountSettings();
 
-      $this->client = new \Google_Client();
+      $this->client = new Client();
       $this->client->setAuthConfig((array) $settings);
 
       $this->client->addScope('https://www.googleapis.com/auth/calendar.readonly');
+      $this->client->addScope('https://www.googleapis.com/auth/drive.readonly');
       $this->client->setSubject($settings->subject);
 
       if (!$this->client) {
@@ -94,12 +119,26 @@ class CalendarService {
   }
 
   /**
+   * Gets the File Service.
+   */
+  public function getFileService() {
+    if ($this->fileService === FALSE) {
+      $this->fileService = new Drive($this->getClient());
+      if (!$this->fileService) {
+        throw new \Exception('Could not get Google Drive Service!');
+      }
+    }
+
+    return $this->fileService;
+  }
+
+  /**
    * Gets the Calendar Service.
    */
   protected function getService() {
 
     if ($this->service === FALSE) {
-      $this->service = new \Google_Service_Calendar($this->getClient());
+      $this->service = new Calendar($this->getClient());
       if (!$this->service) {
         throw new \Exception('Could not get Google Calendar Service!');
       }
