@@ -250,6 +250,22 @@ class CalendarEvent {
   }
 
   /**
+   * Gets start month.
+   */
+  public function getStartMonth() {
+    $dt = $this->getDateTime($this->getStart());
+    return $dt->format('M');
+  }
+
+  /**
+   * Gets start day.
+   */
+  public function getStartDay() {
+    $dt = $this->getDateTime($this->getStart());
+    return $dt->format('d');
+  }
+
+  /**
    * Gets the end date.
    */
   public function getEndDate() {
