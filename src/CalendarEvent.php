@@ -125,6 +125,10 @@ class CalendarEvent {
           \Drupal::logger('neg_gcal')->error($e->getMessage());
         }
 
+        if ($data['file'] && $data['type'] === 'image/heif') {
+          $data['type'] = 'image/jpeg';
+        }
+
         $attachments[] = $data;
       }
     }
@@ -164,6 +168,10 @@ class CalendarEvent {
     $file = $service->files->get($attachment->fileId, ['alt' => 'media']);
     $data = $file->getBody()->getContents();
 
+    if ($attachment->mimeType === 'image/heif') {
+      $data = $this->convertHeicToJpg($attachment, $data);
+    }
+
     // Save the file.
     $local = file_save_data($data, $path, FileSystemInterface::EXISTS_REPLACE);
 
@@ -187,6 +195,38 @@ class CalendarEvent {
     }
 
     return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function convertHeicToJpg(&$attachment, $data) {
+
+    // Check for imagick.
+    if (!class_exists('\Imagick')) {
+      throw new \Exception('Please install imagick!');
+    }
+
+    $im = new \Imagick();
+    $im->readImageBlob($data);
+    $im->setImageFormat('jpg');
+    $im->setSize(2200, (int) (2200 * $im->getImageHeight() / $im->getImageWidth()));
+    $im->setImageCompressionQuality(80);
+    $im->stripImage();
+
+    $temp = tmpfile();
+    $im->writeImageFile($temp);
+    $im->destroy();
+
+    rewind($temp);
+
+    $data = NULL;
+    while (!feof($temp)) {
+      $data .= fread($temp, 8192);
+    }
+
+    $attachment->mimeType = 'image/jpeg';
+    return $data;
   }
 
   /**
