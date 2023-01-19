@@ -306,6 +306,18 @@ class CalendarEvent {
   }
 
   /**
+   * Gets start year.
+   */
+  public function getStartYearNotCurrent() {
+    $dt = $this->getDateTime($this->getStart());
+    if (date('Y') !== $dt->format('Y')) {
+      return $dt->format('Y');
+    }
+
+    return NULL;
+  }
+
+  /**
    * Gets the end date.
    */
   public function getEndDate() {
@@ -357,10 +369,6 @@ class CalendarEvent {
     }
     else {
       $output .= $end->format('j');
-    }
-
-    if ($end->format('Y') !== date('Y')) {
-      $output .= ' ' . $end->format('Y');
     }
 
     return $output;
