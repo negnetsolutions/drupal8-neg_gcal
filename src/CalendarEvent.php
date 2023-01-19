@@ -359,6 +359,10 @@ class CalendarEvent {
       $output .= $end->format('j');
     }
 
+    if ($end->format('Y') !== date('Y')) {
+      $output .= ' ' . $end->format('Y');
+    }
+
     return $output;
   }
 
